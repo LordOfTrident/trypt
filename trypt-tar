@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Usage is the same as trypt, except:
+# - For subcommand 'en', parameter IN can be any file that can be tar'ed
+# - For subcommand 'de', parameter OUT is the folder to put the untar'ed files in
+
+TRYPT=trypt # Path to your trypt executable
+# Use 'make install' to install trypt into /usr/bin
+
+# Human-readable variables for easier modifications
+SUBCMD=$1
+case $SUBCMD in
+	"en")
+		IN_PATH=$2
+		OUT_PATH=$3
+		ARCHIVE="${OUT_PATH}.tar.gz"
+		KEY=$4
+
+		tar -czf $ARCHIVE $IN_PATH
+		$TRYPT en $ARCHIVE $OUT_PATH $KEY
+		rm -f $ARCHIVE ;;
+
+	"de")
+		IN_PATH=$2
+		OUT_PATH=$3
+		ARCHIVE="${IN_PATH}.tar.gz"
+		KEY=$4
+
+		$TRYPT de $IN_PATH $ARCHIVE $KEY
+		mkdir -p $OUT_PATH && tar -xf $ARCHIVE -C $OUT_PATH
+		rm -f $ARCHIVE ;;
+
+	*)
+		$TRYPT $@ ;;
+esac
